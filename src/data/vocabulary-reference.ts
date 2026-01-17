@@ -95,6 +95,12 @@ export async function seedReferenceVocabulary() {
     const existingReference = await db.vocabulary.where('category').equals('reference').toArray();
     const existingIds = new Set(existingReference.map(w => w.id));
     
+    // Update existing words with correct Spanish translations
+    const wordsToUpdate = referenceVocabulary.filter(word => existingIds.has(word.id));
+    for (const word of wordsToUpdate) {
+      await db.vocabulary.update(word.id, { spanish: word.spanish });
+    }
+    
     // Filter out words that already exist
     const newWords = referenceVocabulary.filter(word => !existingIds.has(word.id));
     
@@ -113,6 +119,13 @@ export async function seedReferenceVocabulary() {
       // Some words might already exist, try to add the rest
       const existingReference = await db.vocabulary.where('category').equals('reference').toArray();
       const existingIds = new Set(existingReference.map(w => w.id));
+      
+      // Update existing words
+      const wordsToUpdate = referenceVocabulary.filter(word => existingIds.has(word.id));
+      for (const word of wordsToUpdate) {
+        await db.vocabulary.update(word.id, { spanish: word.spanish });
+      }
+      
       const newWords = referenceVocabulary.filter(word => !existingIds.has(word.id));
       
       if (newWords.length > 0) {

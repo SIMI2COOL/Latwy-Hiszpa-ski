@@ -71,6 +71,12 @@ export async function seedServicesVocabulary() {
     const existingServices = await db.vocabulary.where('category').equals('services').toArray();
     const existingIds = new Set(existingServices.map(w => w.id));
     
+    // Update existing words with correct Spanish translations
+    const wordsToUpdate = servicesVocabulary.filter(word => existingIds.has(word.id));
+    for (const word of wordsToUpdate) {
+      await db.vocabulary.update(word.id, { spanish: word.spanish });
+    }
+    
     // Filter out words that already exist
     const newWords = servicesVocabulary.filter(word => !existingIds.has(word.id));
     
@@ -90,6 +96,13 @@ export async function seedServicesVocabulary() {
       // Some words might already exist, try to add the rest
       const existingServices = await db.vocabulary.where('category').equals('services').toArray();
       const existingIds = new Set(existingServices.map(w => w.id));
+      
+      // Update existing words
+      const wordsToUpdate = servicesVocabulary.filter(word => existingIds.has(word.id));
+      for (const word of wordsToUpdate) {
+        await db.vocabulary.update(word.id, { spanish: word.spanish });
+      }
+      
       const newWords = servicesVocabulary.filter(word => !existingIds.has(word.id));
       
       if (newWords.length > 0) {

@@ -171,6 +171,21 @@ export class SpanishAppDatabase extends Dexie {
         }
       }
     });
+    
+    // Version 8: Force update all vocabulary words from vocabulary files
+    this.version(8).stores({
+      vocabulary: 'id, polish, spanish, category, subcategory, difficulty, [category+subcategory]',
+      categories: 'id, titlePolish, titleSpanish',
+      subcategories: 'id, categoryId, titlePolish, titleSpanish',
+      users: 'id, name, email, createdAt',
+      userProgress: 'userId, level, totalPoints',
+      studySessions: 'id, categoryId, startedAt, completedAt',
+      flashcardStates: 'wordId, nextReview, interval',
+      settings: '++id',
+    }).upgrade(async (trans) => {
+      console.log('Database upgraded to version 8 - vocabulary will be updated by seed functions');
+      // The seed functions will update all vocabulary words with correct Spanish translations
+    });
   }
 }
 

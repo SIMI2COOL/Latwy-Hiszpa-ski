@@ -80,6 +80,12 @@ export async function seedShoppingVocabulary() {
     const existingShopping = await db.vocabulary.where('category').equals('shopping').toArray();
     const existingIds = new Set(existingShopping.map(w => w.id));
     
+    // Update existing words with correct Spanish translations
+    const wordsToUpdate = shoppingVocabulary.filter(word => existingIds.has(word.id));
+    for (const word of wordsToUpdate) {
+      await db.vocabulary.update(word.id, { spanish: word.spanish });
+    }
+    
     // Filter out words that already exist
     const newWords = shoppingVocabulary.filter(word => !existingIds.has(word.id));
     
@@ -98,6 +104,13 @@ export async function seedShoppingVocabulary() {
       // Some words might already exist, try to add the rest
       const existingShopping = await db.vocabulary.where('category').equals('shopping').toArray();
       const existingIds = new Set(existingShopping.map(w => w.id));
+      
+      // Update existing words
+      const wordsToUpdate = shoppingVocabulary.filter(word => existingIds.has(word.id));
+      for (const word of wordsToUpdate) {
+        await db.vocabulary.update(word.id, { spanish: word.spanish });
+      }
+      
       const newWords = shoppingVocabulary.filter(word => !existingIds.has(word.id));
       
       if (newWords.length > 0) {

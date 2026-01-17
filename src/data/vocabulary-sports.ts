@@ -117,6 +117,12 @@ export async function seedSportsVocabulary() {
     const existingSports = await db.vocabulary.where('category').equals('sports').toArray();
     const existingIds = new Set(existingSports.map(w => w.id));
     
+    // Update existing words with correct Spanish translations
+    const wordsToUpdate = sportsVocabulary.filter(word => existingIds.has(word.id));
+    for (const word of wordsToUpdate) {
+      await db.vocabulary.update(word.id, { spanish: word.spanish });
+    }
+    
     // Filter out words that already exist
     const newWords = sportsVocabulary.filter(word => !existingIds.has(word.id));
     
@@ -135,6 +141,13 @@ export async function seedSportsVocabulary() {
       // Some words might already exist, try to add the rest
       const existingSports = await db.vocabulary.where('category').equals('sports').toArray();
       const existingIds = new Set(existingSports.map(w => w.id));
+      
+      // Update existing words
+      const wordsToUpdate = sportsVocabulary.filter(word => existingIds.has(word.id));
+      for (const word of wordsToUpdate) {
+        await db.vocabulary.update(word.id, { spanish: word.spanish });
+      }
+      
       const newWords = sportsVocabulary.filter(word => !existingIds.has(word.id));
       
       if (newWords.length > 0) {

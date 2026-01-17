@@ -112,6 +112,12 @@ export async function seedTransportVocabulary() {
     const existingTransport = await db.vocabulary.where('category').equals('transport').toArray();
     const existingIds = new Set(existingTransport.map(w => w.id));
     
+    // Update existing words with correct Spanish translations
+    const wordsToUpdate = transportVocabulary.filter(word => existingIds.has(word.id));
+    for (const word of wordsToUpdate) {
+      await db.vocabulary.update(word.id, { spanish: word.spanish });
+    }
+    
     // Filter out words that already exist
     const newWords = transportVocabulary.filter(word => !existingIds.has(word.id));
     
@@ -130,6 +136,13 @@ export async function seedTransportVocabulary() {
       // Some words might already exist, try to add the rest
       const existingTransport = await db.vocabulary.where('category').equals('transport').toArray();
       const existingIds = new Set(existingTransport.map(w => w.id));
+      
+      // Update existing words
+      const wordsToUpdate = transportVocabulary.filter(word => existingIds.has(word.id));
+      for (const word of wordsToUpdate) {
+        await db.vocabulary.update(word.id, { spanish: word.spanish });
+      }
+      
       const newWords = transportVocabulary.filter(word => !existingIds.has(word.id));
       
       if (newWords.length > 0) {

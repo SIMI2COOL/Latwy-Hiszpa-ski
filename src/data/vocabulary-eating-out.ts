@@ -95,12 +95,22 @@ export async function seedEatingOutVocabulary() {
     const existingEatingOut = await db.vocabulary.where('category').equals('eating-out').toArray();
     const existingIds = new Set(existingEatingOut.map(w => w.id));
     
+    // Update existing words with correct Spanish translations
+    const wordsToUpdate = eatingOutVocabulary.filter(word => existingIds.has(word.id));
+    for (const word of wordsToUpdate) {
+      await db.vocabulary.update(word.id, { spanish: word.spanish });
+    }
+    
     // Filter out words that already exist
     const newWords = eatingOutVocabulary.filter(word => !existingIds.has(word.id));
     
     if (newWords.length > 0) {
       await db.vocabulary.bulkAdd(newWords);
       console.log(`✅ Added ${newWords.length} new eating-out words`);
+    }
+    
+    if (wordsToUpdate.length > 0) {
+      console.log(`✅ Updated ${wordsToUpdate.length} existing eating-out words with Spanish translations`);
     }
     
     // Update total word count
@@ -113,6 +123,13 @@ export async function seedEatingOutVocabulary() {
       // Some words might already exist, try to add the rest
       const existingEatingOut = await db.vocabulary.where('category').equals('eating-out').toArray();
       const existingIds = new Set(existingEatingOut.map(w => w.id));
+      
+      // Update existing words
+      const wordsToUpdate = eatingOutVocabulary.filter(word => existingIds.has(word.id));
+      for (const word of wordsToUpdate) {
+        await db.vocabulary.update(word.id, { spanish: word.spanish });
+      }
+      
       const newWords = eatingOutVocabulary.filter(word => !existingIds.has(word.id));
       
       if (newWords.length > 0) {

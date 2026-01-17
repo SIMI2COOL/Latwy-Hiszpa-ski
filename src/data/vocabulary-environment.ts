@@ -114,6 +114,12 @@ export async function seedEnvironmentVocabulary() {
     const existingEnvironment = await db.vocabulary.where('category').equals('environment').toArray();
     const existingIds = new Set(existingEnvironment.map(w => w.id));
     
+    // Update existing words with correct Spanish translations
+    const wordsToUpdate = environmentVocabulary.filter(word => existingIds.has(word.id));
+    for (const word of wordsToUpdate) {
+      await db.vocabulary.update(word.id, { spanish: word.spanish });
+    }
+    
     // Also check for duplicates by Polish word + subcategory (case-insensitive)
     const existingByPolish = new Map<string, VocabularyWord>();
     for (const word of existingEnvironment) {

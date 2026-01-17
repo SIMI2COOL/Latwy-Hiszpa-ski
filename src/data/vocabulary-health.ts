@@ -91,6 +91,12 @@ export async function seedHealthVocabulary() {
     const existingHealth = await db.vocabulary.where('category').equals('health').toArray();
     const existingIds = new Set(existingHealth.map(w => w.id));
     
+    // Update existing words with correct Spanish translations
+    const wordsToUpdate = healthVocabulary.filter(word => existingIds.has(word.id));
+    for (const word of wordsToUpdate) {
+      await db.vocabulary.update(word.id, { spanish: word.spanish });
+    }
+    
     // Filter out words that already exist
     const newWords = healthVocabulary.filter(word => !existingIds.has(word.id));
     
@@ -109,6 +115,13 @@ export async function seedHealthVocabulary() {
       // Some words might already exist, try to add the rest
       const existingHealth = await db.vocabulary.where('category').equals('health').toArray();
       const existingIds = new Set(existingHealth.map(w => w.id));
+      
+      // Update existing words
+      const wordsToUpdate = healthVocabulary.filter(word => existingIds.has(word.id));
+      for (const word of wordsToUpdate) {
+        await db.vocabulary.update(word.id, { spanish: word.spanish });
+      }
+      
       const newWords = healthVocabulary.filter(word => !existingIds.has(word.id));
       
       if (newWords.length > 0) {
