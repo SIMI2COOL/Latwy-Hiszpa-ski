@@ -10,11 +10,14 @@ export const subcategoryNames: Record<string, { spanish: string; polish: string 
   'vegetables': { spanish: 'VERDURAS', polish: 'WARZYWA' },
   'fruits': { spanish: 'FRUTAS', polish: 'OWOCE' },
   'bread': { spanish: 'PAN', polish: 'PIECZYWO' },
+  'drinks': { spanish: 'BEBIDAS', polish: 'NAPOJE' },
   
   // Home
   'furniture': { spanish: 'MUEBLES', polish: 'MEBLE' },
   'kitchen': { spanish: 'COCINA', polish: 'KUCHNIA' },
   'bathroom': { spanish: 'BAÑO', polish: 'ŁAZIENKA' },
+  'rooms': { spanish: 'CUARTOS', polish: 'POKOJE' },
+  'garden': { spanish: 'JARDÍN', polish: 'OGROD' },
   
   // Transport
   'car': { spanish: 'COCHE', polish: 'SAMOCHÓD' },

@@ -68,48 +68,61 @@ export const foodVocabulary: VocabularyWord[] = [
   { id: 'bread_006', polish: 'miękisz', spanish: 'miga', category: 'food', subcategory: 'bread', difficulty: 'advanced' },
   { id: 'bread_007', polish: 'mąka', spanish: 'harina', category: 'food', subcategory: 'bread', difficulty: 'intermediate' },
   { id: 'bread_008', polish: 'drożdże', spanish: 'levadura', category: 'food', subcategory: 'bread', difficulty: 'advanced' },
+
+  // NAPOJE (Bebidas)
+  { id: 'drink_001', polish: 'woda', spanish: 'agua', category: 'food', subcategory: 'drinks', difficulty: 'beginner' },
+  { id: 'drink_002', polish: 'sok', spanish: 'zumo', category: 'food', subcategory: 'drinks', difficulty: 'beginner' },
+  { id: 'drink_003', polish: 'kawa', spanish: 'café', category: 'food', subcategory: 'drinks', difficulty: 'beginner' },
+  { id: 'drink_004', polish: 'herbata', spanish: 'té', category: 'food', subcategory: 'drinks', difficulty: 'beginner' },
+  { id: 'drink_005', polish: 'mleko', spanish: 'leche', category: 'food', subcategory: 'drinks', difficulty: 'beginner' },
+  { id: 'drink_006', polish: 'piwo', spanish: 'cerveza', category: 'food', subcategory: 'drinks', difficulty: 'beginner' },
+  { id: 'drink_007', polish: 'wino', spanish: 'vino', category: 'food', subcategory: 'drinks', difficulty: 'beginner' },
+  { id: 'drink_008', polish: 'szampan', spanish: 'champán', category: 'food', subcategory: 'drinks', difficulty: 'intermediate' },
+  { id: 'drink_009', polish: 'whisky', spanish: 'whisky', category: 'food', subcategory: 'drinks', difficulty: 'intermediate' },
+  { id: 'drink_010', polish: 'koktajl', spanish: 'cóctel', category: 'food', subcategory: 'drinks', difficulty: 'intermediate' },
+  { id: 'drink_011', polish: 'lemoniada', spanish: 'limonada', category: 'food', subcategory: 'drinks', difficulty: 'intermediate' },
+  { id: 'drink_012', polish: 'cola', spanish: 'cola', category: 'food', subcategory: 'drinks', difficulty: 'beginner' },
 ];
 
 export async function seedFoodVocabulary() {
   const { db } = await import('@/utils/database');
-  
+
   try {
-    // Get existing food vocabulary IDs
-    const existingFood = await db.vocabulary.where('category').equals('food').toArray();
-    const existingIds = new Set(existingFood.map(w => w.id));
-    
-    // Filter out words that already exist
-    const newWords = foodVocabulary.filter(word => !existingIds.has(word.id));
-    
-    if (newWords.length > 0) {
-      await db.vocabulary.bulkAdd(newWords);
-      console.log(`✅ Added ${newWords.length} new food words`);
+    // Fetch all existing words for this category
+    const existingWordsInDb = await db.vocabulary.where('category').equals('food').toArray();
+    const existingWordMap = new Map(existingWordsInDb.map(word => [word.id, word]));
+
+    const wordsToAdd: typeof foodVocabulary = [];
+    const wordsToUpdate: typeof foodVocabulary = [];
+
+    for (const word of foodVocabulary) {
+      const existing = existingWordMap.get(word.id);
+      if (existing) {
+        // Check if the Spanish translation needs updating
+        if (existing.spanish !== word.spanish || existing.polish !== word.polish) {
+          wordsToUpdate.push(word);
+        }
+      } else {
+        wordsToAdd.push(word);
+      }
     }
-    
-    // Update total word count
+
+    if (wordsToAdd.length > 0) {
+      await db.vocabulary.bulkAdd(wordsToAdd);
+      console.log(`✅ Added ${wordsToAdd.length} new food words`);
+    }
+
+    if (wordsToUpdate.length > 0) {
+      await db.vocabulary.bulkPut(wordsToUpdate);
+      console.log(`🔄 Updated ${wordsToUpdate.length} existing food words`);
+    }
+
+    // Always update total word count
     const totalCount = await db.vocabulary.where('category').equals('food').count();
     await db.categories.update('food', { totalWords: totalCount });
     console.log(`✅ Food vocabulary: ${totalCount} total words (${foodVocabulary.length} in file)`);
     return true;
   } catch (error) {
-    if (error instanceof Error && error.name === 'ConstraintError') {
-      // Some words might already exist, try to add the rest
-      const existingFood = await db.vocabulary.where('category').equals('food').toArray();
-      const existingIds = new Set(existingFood.map(w => w.id));
-      const newWords = foodVocabulary.filter(word => !existingIds.has(word.id));
-      
-      if (newWords.length > 0) {
-        try {
-          await db.vocabulary.bulkAdd(newWords);
-          const totalCount = await db.vocabulary.where('category').equals('food').count();
-          await db.categories.update('food', { totalWords: totalCount });
-          console.log(`✅ Added ${newWords.length} new food words. Total: ${totalCount}`);
-        } catch (e) {
-          console.error('Error adding remaining food words:', e);
-        }
-      }
-      return true;
-    }
     console.error('Error seeding food vocabulary:', error);
     return false;
   }

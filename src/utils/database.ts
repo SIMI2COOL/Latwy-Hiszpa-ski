@@ -186,6 +186,21 @@ export class SpanishAppDatabase extends Dexie {
       console.log('Database upgraded to version 8 - vocabulary will be updated by seed functions');
       // The seed functions will update all vocabulary words with correct Spanish translations
     });
+
+    // Version 9: Add missing themes and refresh all vocabulary
+    this.version(9).stores({
+      vocabulary: 'id, polish, spanish, category, subcategory, difficulty, [category+subcategory]',
+      categories: 'id, titlePolish, titleSpanish',
+      subcategories: 'id, categoryId, titlePolish, titleSpanish',
+      users: 'id, name, email, createdAt',
+      userProgress: 'userId, level, totalPoints',
+      studySessions: 'id, categoryId, startedAt, completedAt',
+      flashcardStates: 'wordId, nextReview, interval',
+      settings: '++id',
+    }).upgrade(async () => {
+      console.log('Database upgraded to version 9 - adding missing themes and refreshing vocabulary');
+      // The seed functions will add new themes and vocabulary
+    });
   }
 }
 
@@ -262,7 +277,7 @@ async function seedInitialData() {
       id: 'home',
       titlePolish: 'DOM',
       titleSpanish: 'HOGAR',
-      description: 'Muebles, cocina, baño',
+      description: 'Muebles, cocina, baño, cuartos, jardín',
       icon: '🏠',
       color: '#F59E0B',
       subcategories: [],
@@ -292,7 +307,7 @@ async function seedInitialData() {
       id: 'food',
       titlePolish: 'ŻYWNOŚĆ',
       titleSpanish: 'COMIDA',
-      description: 'Carne, verduras, frutas, pan',
+      description: 'Carne, verduras, frutas, pan, bebidas',
       icon: '🍎',
       color: '#F97316',
       subcategories: [],

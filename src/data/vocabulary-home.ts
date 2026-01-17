@@ -36,48 +36,71 @@ export const homeVocabulary: VocabularyWord[] = [
   { id: 'bath_008', polish: 'ręcznik', spanish: 'toalla', category: 'home', subcategory: 'bathroom', difficulty: 'beginner' },
   { id: 'bath_009', polish: 'szczoteczka do zębów', spanish: 'cepillo de dientes', category: 'home', subcategory: 'bathroom', difficulty: 'intermediate' },
   { id: 'bath_010', polish: 'pasta do zębów', spanish: 'pasta de dientes', category: 'home', subcategory: 'bathroom', difficulty: 'intermediate' },
+
+  // POKOJE (Cuartos)
+  { id: 'room_001', polish: 'pokój', spanish: 'habitación', category: 'home', subcategory: 'rooms', difficulty: 'beginner' },
+  { id: 'room_002', polish: 'sypialnia', spanish: 'dormitorio', category: 'home', subcategory: 'rooms', difficulty: 'beginner' },
+  { id: 'room_003', polish: 'salon', spanish: 'salón', category: 'home', subcategory: 'rooms', difficulty: 'beginner' },
+  { id: 'room_004', polish: 'jadalnia', spanish: 'comedor', category: 'home', subcategory: 'rooms', difficulty: 'intermediate' },
+  { id: 'room_005', polish: 'gabinet', spanish: 'despacho', category: 'home', subcategory: 'rooms', difficulty: 'intermediate' },
+  { id: 'room_006', polish: 'przedpokój', spanish: 'recibidor', category: 'home', subcategory: 'rooms', difficulty: 'intermediate' },
+  { id: 'room_007', polish: 'piwnica', spanish: 'sótano', category: 'home', subcategory: 'rooms', difficulty: 'intermediate' },
+  { id: 'room_008', polish: 'strych', spanish: 'ático', category: 'home', subcategory: 'rooms', difficulty: 'intermediate' },
+  { id: 'room_009', polish: 'garaz', spanish: 'garaje', category: 'home', subcategory: 'rooms', difficulty: 'beginner' },
+  { id: 'room_010', polish: 'balkon', spanish: 'balcón', category: 'home', subcategory: 'rooms', difficulty: 'beginner' },
+
+  // OGRÓD (Jardín)
+  { id: 'garden_001', polish: 'ogród', spanish: 'jardín', category: 'home', subcategory: 'garden', difficulty: 'beginner' },
+  { id: 'garden_002', polish: 'trawa', spanish: 'césped', category: 'home', subcategory: 'garden', difficulty: 'beginner' },
+  { id: 'garden_003', polish: 'kwiat', spanish: 'flor', category: 'home', subcategory: 'garden', difficulty: 'beginner' },
+  { id: 'garden_004', polish: 'drzewo', spanish: 'árbol', category: 'home', subcategory: 'garden', difficulty: 'beginner' },
+  { id: 'garden_005', polish: 'krzew', spanish: 'arbusto', category: 'home', subcategory: 'garden', difficulty: 'intermediate' },
+  { id: 'garden_006', polish: 'ogrodzenie', spanish: 'valla', category: 'home', subcategory: 'garden', difficulty: 'intermediate' },
+  { id: 'garden_007', polish: 'brama', spanish: 'puerta', category: 'home', subcategory: 'garden', difficulty: 'beginner' },
+  { id: 'garden_008', polish: 'ścieżka', spanish: 'sendero', category: 'home', subcategory: 'garden', difficulty: 'intermediate' },
+  { id: 'garden_009', polish: 'ławka', spanish: 'banco', category: 'home', subcategory: 'garden', difficulty: 'beginner' },
+  { id: 'garden_010', polish: 'fontanna', spanish: 'fuente', category: 'home', subcategory: 'garden', difficulty: 'intermediate' },
 ];
 
 export async function seedHomeVocabulary() {
   const { db } = await import('@/utils/database');
-  
+
   try {
-    // Get existing home vocabulary IDs
-    const existingHome = await db.vocabulary.where('category').equals('home').toArray();
-    const existingIds = new Set(existingHome.map(w => w.id));
-    
-    // Filter out words that already exist
-    const newWords = homeVocabulary.filter(word => !existingIds.has(word.id));
-    
-    if (newWords.length > 0) {
-      await db.vocabulary.bulkAdd(newWords);
-      console.log(`✅ Added ${newWords.length} new home words`);
+    // Fetch all existing words for this category
+    const existingWordsInDb = await db.vocabulary.where('category').equals('home').toArray();
+    const existingWordMap = new Map(existingWordsInDb.map(word => [word.id, word]));
+
+    const wordsToAdd: typeof homeVocabulary = [];
+    const wordsToUpdate: typeof homeVocabulary = [];
+
+    for (const word of homeVocabulary) {
+      const existing = existingWordMap.get(word.id);
+      if (existing) {
+        // Check if the Spanish translation needs updating
+        if (existing.spanish !== word.spanish || existing.polish !== word.polish) {
+          wordsToUpdate.push(word);
+        }
+      } else {
+        wordsToAdd.push(word);
+      }
     }
-    
-    // Update total word count
+
+    if (wordsToAdd.length > 0) {
+      await db.vocabulary.bulkAdd(wordsToAdd);
+      console.log(`✅ Added ${wordsToAdd.length} new home words`);
+    }
+
+    if (wordsToUpdate.length > 0) {
+      await db.vocabulary.bulkPut(wordsToUpdate);
+      console.log(`🔄 Updated ${wordsToUpdate.length} existing home words`);
+    }
+
+    // Always update total word count
     const totalCount = await db.vocabulary.where('category').equals('home').count();
     await db.categories.update('home', { totalWords: totalCount });
     console.log(`✅ Home vocabulary: ${totalCount} total words (${homeVocabulary.length} in file)`);
     return true;
   } catch (error) {
-    if (error instanceof Error && error.name === 'ConstraintError') {
-      // Some words might already exist, try to add the rest
-      const existingHome = await db.vocabulary.where('category').equals('home').toArray();
-      const existingIds = new Set(existingHome.map(w => w.id));
-      const newWords = homeVocabulary.filter(word => !existingIds.has(word.id));
-      
-      if (newWords.length > 0) {
-        try {
-          await db.vocabulary.bulkAdd(newWords);
-          const totalCount = await db.vocabulary.where('category').equals('home').count();
-          await db.categories.update('home', { totalWords: totalCount });
-          console.log(`✅ Added ${newWords.length} new home words. Total: ${totalCount}`);
-        } catch (e) {
-          console.error('Error adding remaining home words:', e);
-        }
-      }
-      return true;
-    }
     console.error('Error seeding home vocabulary:', error);
     return false;
   }
