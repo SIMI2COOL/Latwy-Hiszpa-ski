@@ -182,7 +182,7 @@ export class SpanishAppDatabase extends Dexie {
       studySessions: 'id, categoryId, startedAt, completedAt',
       flashcardStates: 'wordId, nextReview, interval',
       settings: '++id',
-    }).upgrade(async (trans) => {
+    }).upgrade(async () => {
       console.log('Database upgraded to version 8 - vocabulary will be updated by seed functions');
       // The seed functions will update all vocabulary words with correct Spanish translations
     });
