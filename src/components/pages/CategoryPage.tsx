@@ -3,7 +3,7 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '@/utils/database';
 import { Category, VocabularyWord } from '@/types';
-import { ArrowLeft, Play, BookOpen } from 'lucide-react';
+import { ArrowLeft, Play, BookOpen, ChevronLeft, ChevronRight } from 'lucide-react';
 import { isSubcategoryComplete } from '@/utils/subcategoryProgress';
 import { getSubcategoryName } from '@/utils/subcategoryNames';
 
@@ -12,6 +12,9 @@ function CategoryPage() {
   const navigate = useNavigate();
   const [category, setCategory] = useState<Category | null>(null);
   const [completedSubcategories, setCompletedSubcategories] = useState<Set<string>>(new Set());
+
+  // Load all categories for navigation
+  const allCategories = useLiveQuery(() => db.categories.toArray());
 
   // Load words from this category
   const words = useLiveQuery(
@@ -86,6 +89,11 @@ function CategoryPage() {
   const subcategories = Object.keys(wordsBySubcategory);
   const totalWords = words?.length || 0;
 
+  // Find current category index and get previous/next categories
+  const currentIndex = allCategories?.findIndex(cat => cat.id === categoryId) ?? -1;
+  const previousCategory = currentIndex > 0 && allCategories ? allCategories[currentIndex - 1] : null;
+  const nextCategory = currentIndex >= 0 && allCategories && currentIndex < allCategories.length - 1 ? allCategories[currentIndex + 1] : null;
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pb-24 md:pb-8">
       {/* Header */}
@@ -101,13 +109,37 @@ function CategoryPage() {
         <div className="flex items-start space-x-4">
           <span className="text-6xl">{category.icon}</span>
           <div className="flex-1">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">
-              {category.titleSpanish}
-            </h1>
-            <p className="text-xl text-gray-600 mb-2">
-              {category.titlePolish}
-            </p>
-            <p className="text-gray-500">{category.description}</p>
+            <div className="flex items-center gap-3">
+              {/* Previous category arrow */}
+              {previousCategory && (
+                <button
+                  onClick={() => navigate(`/category/${previousCategory.id}`)}
+                  className="p-2 rounded-full hover:bg-gray-100 transition-colors"
+                  title={previousCategory.titleSpanish}
+                >
+                  <ChevronLeft className="w-5 h-5 text-gray-600" />
+                </button>
+              )}
+              <div className="flex-1">
+                <h1 className="text-3xl font-bold text-gray-900 mb-2">
+                  {category.titleSpanish}
+                </h1>
+                <p className="text-xl text-gray-600 mb-2">
+                  {category.titlePolish}
+                </p>
+              </div>
+              {/* Next category arrow */}
+              {nextCategory && (
+                <button
+                  onClick={() => navigate(`/category/${nextCategory.id}`)}
+                  className="p-2 rounded-full hover:bg-gray-100 transition-colors"
+                  title={nextCategory.titleSpanish}
+                >
+                  <ChevronRight className="w-5 h-5 text-gray-600" />
+                </button>
+              )}
+            </div>
+            <p className="text-gray-500 mt-2">{category.description}</p>
             
             <div className="mt-4 flex items-center space-x-4">
               <span className="text-sm text-gray-500">

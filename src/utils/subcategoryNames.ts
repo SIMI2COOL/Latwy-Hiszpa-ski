@@ -55,31 +55,43 @@ export const subcategoryNames: Record<string, { spanish: string; polish: string 
   'shoes': { spanish: 'ZAPATOS', polish: 'BUTY' },
   'accessories': { spanish: 'ACCESORIOS', polish: 'AKCESORIA' },
   'jewelry': { spanish: 'JOYERÍA', polish: 'BIŻUTERIA' },
+  'hair': { spanish: 'PELO', polish: 'WŁOSY' },
   'beauty': { spanish: 'BELLEZA', polish: 'URODA' },
   
   // Health
   'illnesses': { spanish: 'ENFERMEDADES', polish: 'CHOROBY' },
   'doctor': { spanish: 'MÉDICO', polish: 'LEKARZ' },
+  'injuries': { spanish: 'LESIONES', polish: 'URAZY' },
   'hospital': { spanish: 'HOSPITAL', polish: 'SZPITAL' },
+  'dentist': { spanish: 'DENTISTA', polish: 'DENTYSTA' },
+  'pharmacy': { spanish: 'FARMACIA', polish: 'APTEKA' },
   'medications': { spanish: 'MEDICAMENTOS', polish: 'LEKI' },
   'body-parts': { spanish: 'PARTES DEL CUERPO', polish: 'CZĘŚCI CIAŁA' },
   
   // Shopping
   'shopping-center': { spanish: 'CENTRO COMERCIAL', polish: 'CENTRUM HANDLOWE' },
   'grocery': { spanish: 'TIENDA DE COMESTIBLES', polish: 'SKLEP SPOŻYWCZY' },
+  'buying': { spanish: 'COMPRAR', polish: 'KUPOWANIE' },
   'clothing-store': { spanish: 'TIENDA DE ROPA', polish: 'SKLEP ODZIEŻOWY' },
+  'bookstore': { spanish: 'LIBRERÍA', polish: 'KSIĘGARNIA' },
   
   // Sports
   'soccer': { spanish: 'FÚTBOL', polish: 'PIŁKA NOŻNA' },
   'basketball': { spanish: 'BALONCESTO', polish: 'KOSZYKÓWKA' },
   'tennis': { spanish: 'TENIS', polish: 'TENIS' },
   'swimming': { spanish: 'NATACIÓN', polish: 'PŁYWANIE' },
-  'gym': { spanish: 'GIMNASIO', polish: 'SILOWNIA' },
+  'gym': { spanish: 'GIMNASIO', polish: 'SIŁOWNIA' },
+  'running': { spanish: 'CORRER', polish: 'BIEGANIE' },
+  'winter-sports': { spanish: 'DEPORTES DE INVIERNO', polish: 'SPORTY ZIMOWE' },
+  'general': { spanish: 'DEPORTES GENERALES', polish: 'SPORTY OGÓLNE' },
   
   // Leisure
   'theater': { spanish: 'TEATRO', polish: 'TEATR' },
   'cinema': { spanish: 'CINE', polish: 'KINO' },
   'music': { spanish: 'MÚSICA', polish: 'MUZYKA' },
+  'beach': { spanish: 'PLAYA', polish: 'PLAŻA' },
+  'camping': { spanish: 'CAMPING', polish: 'KEMPING' },
+  'photography': { spanish: 'FOTOGRAFÍA', polish: 'FOTOGRAFIA' },
   'reading': { spanish: 'LECTURA', polish: 'CZYTANIE' },
   'games': { spanish: 'JUEGOS', polish: 'GRY' },
   
