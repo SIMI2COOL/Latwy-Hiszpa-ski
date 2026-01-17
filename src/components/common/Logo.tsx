@@ -30,17 +30,17 @@ export const Logo: React.FC<LogoProps> = ({ className = '', size = 32 }) => {
           strokeWidth="16"
         />
 
-        {/* Text ŁP */}
+        {/* Text ŁH */}
         <text 
-          x="107" 
-          y="101" 
+          x="104" 
+          y="97" 
           fontFamily="Arial, Helvetica, sans-serif" 
           fontSize="96" 
           fontWeight="bold" 
           fill="#c8102e" 
           textAnchor="middle" 
           dominantBaseline="central">
-          ŁP
+          ŁH
         </text>
       </svg>
     </div>

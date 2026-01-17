@@ -84,7 +84,7 @@ function SettingsPage() {
         await scheduleDailyReminder(18, 0);
         setReminderTime({ hour: 18, minute: 0 });
       } else {
-        alert('Notification permission is required to enable study reminders. Please allow notifications in your browser settings.');
+        alert('Wymagane jest zezwolenie na powiadomienia, aby włączyć przypomnienia o nauce. Zezwól na powiadomienia w ustawieniach przeglądarki.');
         return;
       }
     } else {
@@ -113,7 +113,7 @@ function SettingsPage() {
         body: 'You will now receive study reminders.',
       });
     } else if (permission === 'denied') {
-      alert('Notification permission was denied. Please enable it in your browser settings to receive study reminders.');
+      alert('Zezwolenie na powiadomienia zostało odrzucone. Włącz je w ustawieniach przeglądarki, aby otrzymywać przypomnienia o nauce.');
     }
   };
 
@@ -168,10 +168,10 @@ function SettingsPage() {
         await handleNotificationToggle();
       }
       
-      alert(`Settings saved successfully! Daily goal: ${settings.dailyGoal}`);
+      alert(`Ustawienia zapisane pomyślnie! Dzienny cel: ${settings.dailyGoal}`);
     } catch (error) {
       console.error('Error saving settings:', error);
-      alert('Error saving settings');
+      alert('Błąd podczas zapisywania ustawień');
     }
   };
 
@@ -196,12 +196,12 @@ function SettingsPage() {
       });
 
       setShowResetConfirm(false);
-      alert('Progress reset successfully');
+      alert('Postęp zresetowany pomyślnie');
       // Refresh the page to update all progress displays
       window.location.reload();
     } catch (error) {
       console.error('Error resetting progress:', error);
-      alert('Error resetting progress');
+      alert('Błąd podczas resetowania postępu');
     }
   };
 
@@ -218,7 +218,7 @@ function SettingsPage() {
       navigate('/login', { replace: true });
     } catch (error) {
       console.error('Error deleting data:', error);
-      alert('Error deleting data');
+      alert('Błąd podczas usuwania danych');
     }
   };
 
@@ -239,7 +239,7 @@ function SettingsPage() {
       }
     } catch (error) {
       console.error('Error logging out:', error);
-      alert('Error logging out');
+      alert('Błąd podczas wylogowywania');
     }
   };
 
@@ -273,10 +273,10 @@ function SettingsPage() {
       link.click();
       
       URL.revokeObjectURL(url);
-      alert('Data exported successfully! You can import this file on another device.');
+      alert('Dane wyeksportowane pomyślnie! Możesz zaimportować ten plik na innym urządzeniu.');
     } catch (error) {
       console.error('Error exporting data:', error);
-      alert('Error exporting data');
+      alert('Błąd podczas eksportowania danych');
     }
   };
 
@@ -292,7 +292,7 @@ function SettingsPage() {
         const importedData = JSON.parse(text);
         
         if (!importedData.user || !importedData.progress) {
-          alert('Invalid data file. Please export data from the app first.');
+          alert('Nieprawidłowy plik danych. Najpierw wyeksportuj dane z aplikacji.');
           return;
         }
 
@@ -357,11 +357,11 @@ function SettingsPage() {
           }
         }
 
-        alert('Data imported successfully! The page will reload.');
+        alert('Dane zaimportowane pomyślnie! Strona zostanie przeładowana.');
         window.location.reload();
       } catch (error) {
         console.error('Error importing data:', error);
-        alert('Error importing data. Please check the file format.');
+        alert('Błąd podczas importowania danych. Sprawdź format pliku.');
       }
     };
     
@@ -382,12 +382,12 @@ function SettingsPage() {
 
     const file = e.target.files[0];
     if (!file.type.startsWith('image/')) {
-      alert('Please select an image file');
+      alert('Wybierz plik obrazu');
       return;
     }
 
     if (file.size > 2 * 1024 * 1024) { // 2MB limit
-      alert('Image size must be less than 2MB');
+      alert('Rozmiar obrazu musi być mniejszy niż 2MB');
       return;
     }
 
@@ -409,10 +409,10 @@ function SettingsPage() {
         name: user.name,
         profilePicture: user.profilePicture,
       });
-      alert('Profile saved successfully!');
+      alert('Profil zapisany pomyślnie!');
     } catch (error) {
       console.error('Error saving profile:', error);
-      alert('Error saving profile');
+      alert('Błąd podczas zapisywania profilu');
     }
   };
 
@@ -426,7 +426,7 @@ function SettingsPage() {
 
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pb-24 md:pb-8">
-      <h1 className="text-3xl font-bold text-gray-900 mb-8">Settings</h1>
+      <h1 className="text-3xl font-bold text-gray-900 mb-8">Ustawienia</h1>
 
       {/* User Profile */}
       {user && (
@@ -434,7 +434,7 @@ function SettingsPage() {
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-bold text-gray-900 flex items-center">
               <User className="w-6 h-6 mr-2 text-purple-600" />
-              Profile
+              Profil
             </h2>
             {user.email && (
               <button
@@ -442,7 +442,7 @@ function SettingsPage() {
                 className="btn-secondary text-sm"
               >
                 <LogOut className="w-4 h-4 inline mr-2" />
-                Logout
+                Wyloguj się
               </button>
             )}
           </div>
@@ -450,7 +450,7 @@ function SettingsPage() {
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Name
+                Imię
               </label>
               <input
                 type="text"
@@ -473,14 +473,14 @@ function SettingsPage() {
                   className="input bg-gray-50 cursor-not-allowed"
                 />
                 <p className="mt-1 text-sm text-gray-500">
-                  Email cannot be changed
+                  Email nie może być zmieniony
                 </p>
               </div>
             )}
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Profile Picture
+                Zdjęcie profilowe
               </label>
               <div className="flex items-center gap-4">
                 <div className="relative w-20 h-20 rounded-full overflow-hidden border-2 border-gray-200">
@@ -509,7 +509,7 @@ function SettingsPage() {
                     className="btn-secondary text-sm cursor-pointer inline-flex items-center"
                   >
                     <Upload className="w-4 h-4 inline mr-2" />
-                    {user.profilePicture ? 'Change Picture' : 'Upload Picture'}
+                    {user.profilePicture ? 'Zmień zdjęcie' : 'Prześlij zdjęcie'}
                   </label>
                   {user.profilePicture && (
                     <button
@@ -520,11 +520,11 @@ function SettingsPage() {
                       }}
                       className="btn-secondary text-sm ml-2"
                     >
-                      Remove
+                      Usuń
                     </button>
                   )}
                   <p className="mt-1 text-xs text-gray-500">
-                    Max 2MB. JPG, PNG, or GIF
+                    Maks. 2MB. JPG, PNG lub GIF
                   </p>
                 </div>
               </div>
@@ -536,7 +536,7 @@ function SettingsPage() {
                 className="btn-primary"
               >
                 <Save className="w-4 h-4 inline mr-2" />
-                Save Profile
+                Zapisz profil
               </button>
             </div>
           </div>
@@ -547,20 +547,20 @@ function SettingsPage() {
       <div className="card p-6 mb-6">
         <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center">
           <Volume2 className="w-6 h-6 mr-2 text-primary-600" />
-          Audio
+          Dźwięk
         </h2>
 
         <div className="space-y-4">
           <SettingToggle
-            label="Sound enabled"
-            description="Play sound effects for correct/incorrect answers"
+            label="Dźwięk włączony"
+            description="Odtwarzaj efekty dźwiękowe dla poprawnych/niepoprawnych odpowiedzi"
             checked={settings.soundEnabled}
             onChange={() => handleToggle('soundEnabled')}
           />
 
           <SettingToggle
-            label="Auto-play audio"
-            description="Automatically play word audio"
+            label="Automatyczne odtwarzanie audio"
+            description="Automatycznie odtwarzaj audio słów"
             checked={settings.autoPlayAudio}
             onChange={() => handleToggle('autoPlayAudio')}
           />
@@ -571,13 +571,13 @@ function SettingsPage() {
       <div className="card p-6 mb-6">
         <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center">
           <Target className="w-6 h-6 mr-2 text-green-600" />
-          Study Goals
+          Cele nauki
         </h2>
 
         <div className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Daily word goal
+              Dzienny cel słów
             </label>
             <input
               type="number"
@@ -589,7 +589,7 @@ function SettingsPage() {
               className="input max-w-xs"
             />
             <p className="mt-1 text-sm text-gray-500">
-              Number of new words per day (5-100)
+              Liczba nowych słów dziennie (5-100)
             </p>
           </div>
         </div>
@@ -599,27 +599,27 @@ function SettingsPage() {
       <div className="card p-6 mb-6">
         <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center">
           <Bell className="w-6 h-6 mr-2 text-yellow-600" />
-          Notifications
+          Powiadomienia
         </h2>
 
         <div className="space-y-4">
           {notificationPermission !== 'granted' && (
             <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4">
               <p className="text-sm text-yellow-800 mb-3">
-                Enable browser notifications to receive study reminders and achievement alerts.
+                Włącz powiadomienia przeglądarki, aby otrzymywać przypomnienia o nauce i alerty o osiągnięciach.
               </p>
               <button
                 onClick={handleRequestPermission}
                 className="btn-primary text-sm"
               >
-                Enable Notifications
+                Włącz powiadomienia
               </button>
             </div>
           )}
 
           <SettingToggle
-            label="Study reminders"
-            description="Receive daily notifications to maintain your streak"
+            label="Przypomnienia o nauce"
+            description="Otrzymuj codzienne powiadomienia, aby utrzymać swoją serię"
             checked={settings.notifications && notificationPermission === 'granted'}
             onChange={handleNotificationToggle}
             disabled={notificationPermission !== 'granted'}
@@ -628,14 +628,14 @@ function SettingsPage() {
           {settings.notifications && notificationPermission === 'granted' && reminderTime && (
             <div className="pt-4 border-t border-gray-200">
               <p className="text-sm text-gray-600 mb-2">
-                Daily reminder scheduled for {reminderTime.hour.toString().padStart(2, '0')}:
+                Codzienne przypomnienie zaplanowane na {reminderTime.hour.toString().padStart(2, '0')}:
                 {reminderTime.minute.toString().padStart(2, '0')}
               </p>
               <button
                 onClick={handleTestNotification}
                 className="btn-secondary text-sm"
               >
-                Test Notification
+                Testuj powiadomienie
               </button>
             </div>
           )}
@@ -643,7 +643,7 @@ function SettingsPage() {
           {notificationPermission === 'denied' && (
             <div className="bg-red-50 border border-red-200 rounded-lg p-4">
               <p className="text-sm text-red-800">
-                Notifications are blocked. Please enable them in your browser settings to receive study reminders.
+                Powiadomienia są zablokowane. Włącz je w ustawieniach przeglądarki, aby otrzymywać przypomnienia o nauce.
               </p>
             </div>
           )}
@@ -654,7 +654,7 @@ function SettingsPage() {
       <div className="card p-6 mb-6">
         <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center">
           <Download className="w-6 h-6 mr-2 text-blue-600" />
-          Data Management
+          Zarządzanie danymi
         </h2>
 
         <div className="space-y-4">
@@ -665,11 +665,11 @@ function SettingsPage() {
                 className="btn-secondary"
               >
                 <Download className="w-4 h-4 inline mr-2" />
-                Export My Data
+                Eksportuj moje dane
               </button>
               <label className="btn-secondary cursor-pointer">
                 <UploadIcon className="w-4 h-4 inline mr-2" />
-                Import Data
+                Importuj dane
                 <input
                   type="file"
                   accept=".json"
@@ -679,7 +679,7 @@ function SettingsPage() {
               </label>
             </div>
             <p className="mt-2 text-sm text-gray-500">
-              Export your data to continue on another device, or import previously exported data
+              Eksportuj swoje dane, aby kontynuować na innym urządzeniu, lub importuj wcześniej wyeksportowane dane
             </p>
           </div>
 
@@ -689,10 +689,10 @@ function SettingsPage() {
               className="btn-danger w-full sm:w-auto mb-4"
             >
               <Trash2 className="w-4 h-4 inline mr-2" />
-              Reset Progress
+              Resetuj postęp
             </button>
             <p className="mt-2 text-sm text-gray-500 mb-4">
-              Delete all your progress and start from scratch
+              Usuń cały swój postęp i zacznij od nowa
             </p>
             
             <button
@@ -700,10 +700,10 @@ function SettingsPage() {
               className="btn-danger w-full sm:w-auto"
             >
               <Trash2 className="w-4 h-4 inline mr-2" />
-              Delete All Data
+              Usuń wszystkie dane
             </button>
             <p className="mt-2 text-sm text-gray-500">
-              Permanently delete your account and all data. You will be logged out.
+              Trwale usuń swoje konto i wszystkie dane. Zostaniesz wylogowany.
             </p>
           </div>
         </div>
@@ -716,27 +716,27 @@ function SettingsPage() {
           className="w-full btn-primary flex items-center justify-center"
         >
           <Save className="w-5 h-5 mr-2" />
-          Save All Settings
+          Zapisz wszystkie ustawienia
         </button>
         <p className="text-sm text-gray-600 text-center mt-2">
-          Save all changes including daily goal and profile updates
+          Zapisz wszystkie zmiany, w tym dzienny cel i aktualizacje profilu
         </p>
       </div>
 
       {/* About */}
       <div className="card p-6">
         <h2 className="text-xl font-bold text-gray-900 mb-4">
-          About
+          O aplikacji
         </h2>
         <div className="text-sm text-gray-600 space-y-2">
           <p>
-            <strong>Polish Learning App</strong> v1.0.0
+            <strong>Łatwy Hiszpański</strong> v1.0.0
           </p>
           <p>
-            Polish learning app based on visual dictionary
+            Aplikacja do nauki hiszpańskiego dla Polaków
           </p>
           <p>
-            Vocabulary based on <em>Polish-English Bilingual Visual Dictionary</em> (Dorling Kindersley, 2008)
+            Słownictwo oparte na wizualnym słowniku polsko-hiszpańskim
           </p>
         </div>
       </div>
@@ -746,18 +746,18 @@ function SettingsPage() {
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-lg max-w-md w-full p-6">
             <h3 className="text-xl font-bold text-gray-900 mb-4">
-              Reset Progress?
+              Zresetować postęp?
             </h3>
             <p className="text-gray-600 mb-6">
-              This action will delete all your progress, points, achievements, and streak.
-              Your account and settings will remain. This cannot be undone.
+              Ta akcja usunie cały Twój postęp, punkty, osiągnięcia i serię.
+              Twoje konto i ustawienia pozostaną. Tej akcji nie można cofnąć.
             </p>
             <div className="flex space-x-3">
               <button
                 onClick={() => setShowResetConfirm(false)}
                 className="flex-1 btn-secondary"
               >
-                Cancel
+                Anuluj
               </button>
               <button
                 onClick={() => {
@@ -766,7 +766,7 @@ function SettingsPage() {
                 }}
                 className="flex-1 btn-danger"
               >
-                Yes, Reset
+                Tak, zresetuj
               </button>
             </div>
           </div>
@@ -778,33 +778,33 @@ function SettingsPage() {
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-lg max-w-md w-full p-6">
             <h3 className="text-xl font-bold text-red-600 mb-4">
-              ⚠️ Delete All Data?
+              ⚠️ Usunąć wszystkie dane?
             </h3>
             <p className="text-gray-600 mb-4">
-              This will permanently delete:
+              To trwale usunie:
             </p>
             <ul className="list-disc list-inside text-gray-600 mb-6 space-y-1">
-              <li>Your account</li>
-              <li>All progress and achievements</li>
-              <li>All study sessions</li>
-              <li>All flashcard states</li>
-              <li>All settings</li>
+              <li>Twoje konto</li>
+              <li>Cały postęp i osiągnięcia</li>
+              <li>Wszystkie sesje nauki</li>
+              <li>Wszystkie stany fiszek</li>
+              <li>Wszystkie ustawienia</li>
             </ul>
             <p className="text-red-600 font-semibold mb-6">
-              This action cannot be undone. You will be logged out immediately.
+              Tej akcji nie można cofnąć. Zostaniesz natychmiast wylogowany.
             </p>
             <div className="flex space-x-3">
               <button
                 onClick={() => setShowDeleteConfirm(false)}
                 className="flex-1 btn-secondary"
               >
-                Cancel
+                Anuluj
               </button>
               <button
                 onClick={handleDeleteAllData}
                 className="flex-1 btn-danger"
               >
-                Yes, Delete Everything
+                Tak, usuń wszystko
               </button>
             </div>
           </div>

@@ -10,7 +10,7 @@ function LoadingScreen() {
             <div className="w-20 h-20 border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin"></div>
           </div>
         </div>
-        <h2 className="text-2xl font-bold text-gray-800 mb-2">Cargando Polski</h2>
+        <h2 className="text-2xl font-bold text-gray-800 mb-2">Ładowanie...</h2>
         <p className="text-gray-600">Preparando tu experiencia de aprendizaje...</p>
       </div>
     </div>

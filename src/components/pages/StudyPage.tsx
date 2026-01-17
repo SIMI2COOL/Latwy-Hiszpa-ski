@@ -566,25 +566,25 @@ function StudyPage() {
       utterance.volume = 1.0; // Maximum volume
       speechSynthesis.speak(utterance);
     } else {
-      // In flashcard mode, play the Polish word
-      const utterance = new SpeechSynthesisUtterance(currentWord.polish);
-      utterance.lang = 'pl-PL';
+      // In flashcard mode, play the Spanish word
+      const utterance = new SpeechSynthesisUtterance(currentWord.spanish);
+      utterance.lang = 'es-ES';
       
-      // CRITICAL: Find ONLY Polish voices - filter out any English voices
-      const polishVoices = voices.filter(voice => {
+      // CRITICAL: Find ONLY Spanish voices - filter out any other voices
+      const spanishVoices = voices.filter(voice => {
         const lang = voice.lang.toLowerCase();
         const name = voice.name.toLowerCase();
-        // Must be Polish language code, NOT English
-        return (lang.startsWith('pl') || lang.includes('pl-')) && 
+        // Must be Spanish language code
+        return (lang.startsWith('es') || lang.includes('es-')) && 
                !lang.startsWith('en') && 
                !name.includes('english') &&
                !name.includes('en-');
       });
       
-      if (polishVoices.length === 0) {
-        console.warn('No Polish voices available. Available voices:', voices.map(v => `${v.name} (${v.lang})`));
-        // Use default with Polish locale - browser will try to use Polish if available
-        utterance.lang = 'pl-PL';
+      if (spanishVoices.length === 0) {
+        console.warn('No Spanish voices available. Available voices:', voices.map(v => `${v.name} (${v.lang})`));
+        // Use default with Spanish locale - browser will try to use Spanish if available
+        utterance.lang = 'es-ES';
         utterance.rate = 0.95;
         utterance.pitch = 1.0;
         utterance.volume = 1.0;
@@ -592,54 +592,54 @@ function StudyPage() {
         return;
       }
       
-      // Log all available Polish voices for debugging
-      console.log('Available Polish voices:', polishVoices.map(v => ({
+      // Log all available Spanish voices for debugging
+      console.log('Available Spanish voices:', spanishVoices.map(v => ({
         name: v.name,
         lang: v.lang,
         localService: v.localService,
         isFemale: isFemaleVoice(v)
       })));
       
-      // Find female Polish voices - try multiple strategies
-      let femalePolishVoices = polishVoices.filter(voice => isFemaleVoice(voice));
+      // Find female Spanish voices - try multiple strategies
+      let femaleSpanishVoices = spanishVoices.filter(voice => isFemaleVoice(voice));
       
       // If no female voices found by name, try to find voices that might be female
       // by checking if they're NOT explicitly male
-      if (femalePolishVoices.length === 0) {
+      if (femaleSpanishVoices.length === 0) {
         // On some systems, voices might not have clear gender indicators
         // Try to find voices that don't have male indicators
-        const nonMaleVoices = polishVoices.filter(voice => {
+        const nonMaleVoices = spanishVoices.filter(voice => {
           const nameLower = voice.name.toLowerCase();
-          const maleIndicators = ['male', 'mężczyzna', 'męski'];
+          const maleIndicators = ['male', 'hombre', 'masculino'];
           return !maleIndicators.some(indicator => nameLower.includes(indicator));
         });
         
         // If we have multiple voices and some are clearly not male, prefer those
-        if (nonMaleVoices.length > 0 && nonMaleVoices.length < polishVoices.length) {
-          femalePolishVoices = nonMaleVoices;
+        if (nonMaleVoices.length > 0 && nonMaleVoices.length < spanishVoices.length) {
+          femaleSpanishVoices = nonMaleVoices;
           console.log('Using heuristic: selected voices without male indicators');
         }
       }
       
-      let polishVoice: SpeechSynthesisVoice | null = null;
+      let spanishVoice: SpeechSynthesisVoice | null = null;
       
-      if (femalePolishVoices.length > 0) {
+      if (femaleSpanishVoices.length > 0) {
         // Prefer local service voices, then prefer voices with clearer female indicators
-        polishVoice = femalePolishVoices.find(voice => 
+        spanishVoice = femaleSpanishVoices.find(voice => 
           voice.localService && isFemaleVoice(voice)
-        ) || femalePolishVoices.find(voice => voice.localService) || femalePolishVoices[0];
-        console.log('✅ Using female Polish voice:', polishVoice.name, polishVoice.lang);
+        ) || femaleSpanishVoices.find(voice => voice.localService) || femaleSpanishVoices[0];
+        console.log('✅ Using female Spanish voice:', spanishVoice.name, spanishVoice.lang);
       } else {
-        // Last resort: use any Polish voice, but log a warning
-        polishVoice = polishVoices.find(voice => voice.localService) || polishVoices[0];
-        console.warn('⚠️ No female Polish voice detected. Using:', polishVoice.name, polishVoice.lang);
-        console.warn('Available voices:', polishVoices.map(v => v.name).join(', '));
+        // Last resort: use any Spanish voice, but log a warning
+        spanishVoice = spanishVoices.find(voice => voice.localService) || spanishVoices[0];
+        console.warn('⚠️ No female Spanish voice detected. Using:', spanishVoice.name, spanishVoice.lang);
+        console.warn('Available voices:', spanishVoices.map(v => v.name).join(', '));
       }
       
       // Set the voice and language
-      if (polishVoice) {
-        utterance.voice = polishVoice;
-        utterance.lang = polishVoice.lang; // Use the voice's language
+      if (spanishVoice) {
+        utterance.voice = spanishVoice;
+        utterance.lang = spanishVoice.lang; // Use the voice's language
       }
       
       // Audio settings for clarity
@@ -859,10 +859,10 @@ function StudyPage() {
             onClick={handleFlip}
           >
             <div className="text-5xl font-bold mb-4">
-              {isFlipped ? currentWord.spanish : currentWord.polish}
+              {isFlipped ? currentWord.polish : currentWord.spanish}
             </div>
             <div className="text-gray-500 text-sm">
-              {isFlipped ? 'Hiszpański' : 'Polski'} - Kliknij, aby odwrócić
+              {isFlipped ? 'Polski' : 'Hiszpański'} - Kliknij, aby odwrócić
             </div>
           </div>
 

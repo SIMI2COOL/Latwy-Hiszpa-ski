@@ -5,6 +5,7 @@ import { db } from '@/utils/database';
 import { Category, VocabularyWord } from '@/types';
 import { ArrowLeft, Play, BookOpen } from 'lucide-react';
 import { isSubcategoryComplete } from '@/utils/subcategoryProgress';
+import { getSubcategoryName } from '@/utils/subcategoryNames';
 
 function CategoryPage() {
   const { categoryId } = useParams<{ categoryId: string }>();
@@ -101,10 +102,10 @@ function CategoryPage() {
           <span className="text-6xl">{category.icon}</span>
           <div className="flex-1">
             <h1 className="text-3xl font-bold text-gray-900 mb-2">
-              {category.titlePolish}
+              {category.titleSpanish}
             </h1>
             <p className="text-xl text-gray-600 mb-2">
-              {category.titleSpanish}
+              {category.titlePolish}
             </p>
             <p className="text-gray-500">{category.description}</p>
             
@@ -144,10 +145,7 @@ function CategoryPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {subcategories.map((subcategory) => {
               const subcategoryWords = wordsBySubcategory[subcategory];
-              const subcategoryName = subcategory
-                .split('-')
-                .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-                .join(' ');
+              const subcategoryName = getSubcategoryName(subcategory);
               const isComplete = completedSubcategories.has(subcategory);
 
               return (
@@ -164,8 +162,11 @@ function CategoryPage() {
                     <div className="flex items-start justify-between mb-3">
                       <div className="flex-1">
                         <h3 className="text-lg font-semibold text-gray-900 mb-1">
-                          {subcategoryName}
+                          {subcategoryName.spanish}
                         </h3>
+                        <p className="text-sm text-gray-500 mb-1">
+                          {subcategoryName.polish}
+                        </p>
                         <p className="text-sm text-gray-500">
                           {subcategoryWords.length} słów
                         </p>
@@ -193,7 +194,7 @@ function CategoryPage() {
                         ))}
                         {subcategoryWords.length > 3 && (
                           <span className="text-xs text-gray-400 px-2 py-1">
-                            +{subcategoryWords.length - 3} more
+                            +{subcategoryWords.length - 3} więcej
                           </span>
                         )}
                       </div>

@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { db } from '@/utils/database';
 import { Category, VocabularyWord } from '@/types';
 import { ChevronLeft, ChevronRight, Play } from 'lucide-react';
+import { getSubcategoryName } from '@/utils/subcategoryNames';
 
 interface CategoryCarouselProps {
   categories: Category[];
@@ -34,10 +35,8 @@ export function CategoryCarousel({ categories }: CategoryCarouselProps) {
       }, {} as Record<string, VocabularyWord[]>);
 
       const subcategoryNames = Object.keys(wordsBySubcategory).map((sub) => {
-        return sub
-          .split('-')
-          .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-          .join(' ');
+        const name = getSubcategoryName(sub);
+        return name.spanish;
       });
 
       setSubcategories({
@@ -100,8 +99,8 @@ export function CategoryCarousel({ categories }: CategoryCarouselProps) {
             <div className="flex items-center gap-3 mb-2">
               <span className="text-4xl">{currentCategory.icon}</span>
               <div>
-                <h3 className="text-2xl font-bold">{currentCategory.titlePolish}</h3>
-                <p className="text-lg opacity-90">{currentCategory.titleSpanish}</p>
+                <h3 className="text-2xl font-bold">{currentCategory.titleSpanish}</h3>
+                <p className="text-lg opacity-90">{currentCategory.titlePolish}</p>
               </div>
             </div>
             <p className="text-sm opacity-80 mb-4">{currentCategory.description}</p>
@@ -123,7 +122,7 @@ export function CategoryCarousel({ categories }: CategoryCarouselProps) {
               ))}
               {currentSubcategories.length > 6 && (
                 <span className="px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full text-sm">
-                  +{currentSubcategories.length - 6} more
+                  +{currentSubcategories.length - 6} więcej
                 </span>
               )}
             </div>

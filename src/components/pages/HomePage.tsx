@@ -266,10 +266,10 @@ function CategoryCard({ category, isCompleted, progress }: CategoryCardProps) {
           </div>
           
           <h3 className="text-lg font-bold text-gray-900 mb-1">
-            {category.titlePolish}
+            {category.titleSpanish}
           </h3>
           <p className="text-sm text-gray-600 mb-3">
-            {category.titleSpanish}
+            {category.titlePolish}
           </p>
           <p className="text-sm text-gray-500">
             {category.description}
