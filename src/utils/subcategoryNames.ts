@@ -41,7 +41,7 @@ export const subcategoryNames: Record<string, { spanish: string; polish: string 
   'job-search': { spanish: 'BÚSQUEDA DE EMPLEO', polish: 'POSZUKIWANIE PRACY' },
   
   // Eating Out
-  'cafe': { spanish: 'CAFÉ', polish: 'KAWIARNIA' },
+  'cafe': { spanish: 'CAFETERÍA', polish: 'KAWIARNIA' },
   'bar': { spanish: 'BAR', polish: 'BAR' },
   'restaurant': { spanish: 'RESTAURANTE', polish: 'RESTAURACJA' },
   'fastfood': { spanish: 'COMIDA RÁPIDA', polish: 'FAST FOOD' },
@@ -99,7 +99,7 @@ export const subcategoryNames: Record<string, { spanish: string; polish: string 
   'emergency': { spanish: 'EMERGENCIAS', polish: 'NAGŁE WYPADKI' },
   'bank': { spanish: 'BANCO', polish: 'BANK' },
   'hotel': { spanish: 'HOTEL', polish: 'HOTEL' },
-  'post-office': { spanish: 'OFICINA DE CORREOS', polish: 'POCZTA' },
+  'post-office': { spanish: 'CORREO', polish: 'POCZTA' },
   
   // Environment
   'space': { spanish: 'ESPACIO', polish: 'KOSMOS' },
@@ -107,6 +107,7 @@ export const subcategoryNames: Record<string, { spanish: string; polish: string 
   'landscape': { spanish: 'PAISAJE', polish: 'KRAJOBRAZ' },
   'weather': { spanish: 'CLIMA', polish: 'POGODA' },
   'animals': { spanish: 'ANIMALES', polish: 'ZWIERZĘTA' },
+  'birds': { spanish: 'AVES', polish: 'PTAKI' },
   'plants': { spanish: 'PLANTAS', polish: 'ROŚLINY' },
   
   // Reference

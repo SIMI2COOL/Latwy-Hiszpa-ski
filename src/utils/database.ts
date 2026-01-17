@@ -370,7 +370,7 @@ async function seedInitialData() {
     },
     {
       id: 'reference',
-      titlePolish: 'INFORMACJE',
+      titlePolish: 'INFORMACJA',
       titleSpanish: 'INFORMACIÓN',
       description: 'Tiempo, números, mapas',
       icon: '📋',
