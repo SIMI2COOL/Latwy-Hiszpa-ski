@@ -49,11 +49,13 @@ function SettingsPage() {
     }
   }, [user?.id]); // Only update when user ID changes, not on every name change
 
-  // Block navigation if name is invalid
+  // Block navigation if name is invalid (only when leaving settings page)
   const isNameInvalid = user ? user.name.trim().length < 2 : false;
   const blocker = useBlocker(
     ({ currentLocation, nextLocation }) =>
-      isNameInvalid && currentLocation.pathname !== nextLocation.pathname
+      isNameInvalid && 
+      currentLocation.pathname === '/settings' && 
+      nextLocation.pathname !== '/settings'
   );
 
   // Handle blocked navigation
