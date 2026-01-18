@@ -371,9 +371,9 @@ function SettingsPage() {
   };
 
   const handleUpdateName = (newName: string) => {
-    if (!user || !newName.trim()) return;
-    // Update local state, save on save button click
-    const updatedUser = { ...user, name: newName.trim() };
+    if (!user) return;
+    // Allow any input during typing - validation happens on save
+    const updatedUser = { ...user, name: newName };
     setUser(updatedUser);
   };
 
@@ -404,11 +404,26 @@ function SettingsPage() {
 
   const handleSaveProfile = async () => {
     if (!user) return;
+    
+    // Validate name length only when saving
+    const trimmedName = user.name.trim();
+    if (!trimmedName) {
+      alert('Imię nie może być puste');
+      return;
+    }
+    
+    if (trimmedName.length < 2) {
+      alert('Imię musi mieć co najmniej 2 znaki');
+      return;
+    }
+    
     try {
       await db.users.update(user.id, {
-        name: user.name,
+        name: trimmedName,
         profilePicture: user.profilePicture,
       });
+      // Update local state with trimmed name
+      setUser({ ...user, name: trimmedName });
       alert('Profil zapisany pomyślnie!');
     } catch (error) {
       console.error('Error saving profile:', error);
