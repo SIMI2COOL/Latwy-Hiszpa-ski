@@ -110,7 +110,7 @@ export const subcategoryNames: Record<string, { spanish: string; polish: string 
   'bank': { spanish: 'BANCO', polish: 'BANK' },
   'hotel': { spanish: 'HOTEL', polish: 'HOTEL' },
   'post-office': { spanish: 'CORREO', polish: 'POCZTA' },
-  'general': { spanish: 'SERVICIOS GENERALES', polish: 'USŁUGI OGÓLNE' },
+  'services-general': { spanish: 'SERVICIOS GENERALES', polish: 'USŁUGI OGÓLNE' },
   
   // Environment
   'space': { spanish: 'ESPACIO', polish: 'KOSMOS' },

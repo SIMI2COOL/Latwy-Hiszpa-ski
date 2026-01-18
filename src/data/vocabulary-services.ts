@@ -70,16 +70,16 @@ export const servicesVocabulary: VocabularyWord[] = [
   { id: 'post_018', polish: 'paczka pocztowa', spanish: 'paquete postal', category: 'services', subcategory: 'post-office', difficulty: 'intermediate' },
 
   // Additional services
-  { id: 'services_001', polish: 'serwis', spanish: 'servicio', category: 'services', subcategory: 'general', difficulty: 'beginner' },
-  { id: 'services_002', polish: 'klient', spanish: 'cliente', category: 'services', subcategory: 'general', difficulty: 'beginner' },
-  { id: 'services_003', polish: 'obsługa', spanish: 'atención', category: 'services', subcategory: 'general', difficulty: 'intermediate' },
-  { id: 'services_004', polish: 'reklamacja', spanish: 'reclamación', category: 'services', subcategory: 'general', difficulty: 'intermediate' },
-  { id: 'services_005', polish: 'gwarancja', spanish: 'garantía', category: 'services', subcategory: 'general', difficulty: 'intermediate' },
-  { id: 'services_006', polish: 'naprawa', spanish: 'reparación', category: 'services', subcategory: 'general', difficulty: 'intermediate' },
-  { id: 'services_007', polish: 'konserwacja', spanish: 'mantenimiento', category: 'services', subcategory: 'general', difficulty: 'intermediate' },
-  { id: 'services_008', polish: 'instalacja', spanish: 'instalación', category: 'services', subcategory: 'general', difficulty: 'intermediate' },
-  { id: 'services_009', polish: 'faktura', spanish: 'factura', category: 'services', subcategory: 'general', difficulty: 'intermediate' },
-  { id: 'services_010', polish: 'rachunek', spanish: 'cuenta', category: 'services', subcategory: 'general', difficulty: 'beginner' },
+  { id: 'services_001', polish: 'serwis', spanish: 'servicio', category: 'services', subcategory: 'services-general', difficulty: 'beginner' },
+  { id: 'services_002', polish: 'klient', spanish: 'cliente', category: 'services', subcategory: 'services-general', difficulty: 'beginner' },
+  { id: 'services_003', polish: 'obsługa', spanish: 'atención', category: 'services', subcategory: 'services-general', difficulty: 'intermediate' },
+  { id: 'services_004', polish: 'reklamacja', spanish: 'reclamación', category: 'services', subcategory: 'services-general', difficulty: 'intermediate' },
+  { id: 'services_005', polish: 'gwarancja', spanish: 'garantía', category: 'services', subcategory: 'services-general', difficulty: 'intermediate' },
+  { id: 'services_006', polish: 'naprawa', spanish: 'reparación', category: 'services', subcategory: 'services-general', difficulty: 'intermediate' },
+  { id: 'services_007', polish: 'konserwacja', spanish: 'mantenimiento', category: 'services', subcategory: 'services-general', difficulty: 'intermediate' },
+  { id: 'services_008', polish: 'instalacja', spanish: 'instalación', category: 'services', subcategory: 'services-general', difficulty: 'intermediate' },
+  { id: 'services_009', polish: 'faktura', spanish: 'factura', category: 'services', subcategory: 'services-general', difficulty: 'intermediate' },
+  { id: 'services_010', polish: 'rachunek', spanish: 'cuenta', category: 'services', subcategory: 'services-general', difficulty: 'beginner' },
 ];
 
 export async function seedServicesVocabulary() {
