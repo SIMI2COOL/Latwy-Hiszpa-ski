@@ -132,7 +132,7 @@ function LoginPage() {
             <div className="flex justify-center mb-4">
               <BookOpen className="w-16 h-16" style={{ color: '#0074bd' }} />
             </div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            <h1 className="text-3xl font-bold mb-2" style={{ color: '#c7102e' }}>
               Łatwy Hiszpański
             </h1>
             <p className="text-gray-600">

@@ -19,7 +19,7 @@ function Layout() {
           <div className="flex justify-between items-center h-16">
             <Link to="/" className="flex items-center space-x-2">
               <Logo size={32} />
-              <span className="text-xl font-bold text-gradient">Łatwy Hiszpański</span>
+              <span className="text-xl font-bold" style={{ color: '#c7102e' }}>Łatwy Hiszpański</span>
             </Link>
             
             <nav className="hidden md:flex space-x-8">
