@@ -14,7 +14,7 @@ import {
 import { hasReachedDailyGoal } from '@/utils/dailyLimit';
 import { calculateNextReview, mapResultToQuality } from '@/utils/spaced-repetition';
 import { useUser } from '@/contexts/UserContext';
-import { comparePolishText } from '@/utils/polishTextUtils';
+import { compareSpanishText } from '@/utils/polishTextUtils';
 import { playSuccessSound, playErrorSound, playLevelUpSound, playAchievementSound, playSoundIfEnabled } from '@/utils/soundEffects';
 import { getUserSettings } from '@/utils/database';
 
@@ -191,7 +191,8 @@ function StudyPage() {
   const checkAnswerRealTime = async (answer: string) => {
     if (!answer.trim() || !currentWord) return;
 
-    const correct = comparePolishText(answer, currentWord.polish);
+    // In quiz mode, compare Spanish answer with correct Spanish word
+    const correct = compareSpanishText(answer, currentWord.spanish);
     setIsAnswerCorrect(correct);
 
     // If correct, set up auto-advance
@@ -285,8 +286,8 @@ function StudyPage() {
     }
 
     const timeSpent = (Date.now() - questionStartTime) / 1000;
-    // Compare user's Polish answer with correct Polish word
-    const correct = comparePolishText(quizAnswer, currentWord.polish);
+    // Compare user's Spanish answer with correct Spanish word
+    const correct = compareSpanishText(quizAnswer, currentWord.spanish);
 
     // If already correct and auto-advancing, don't process again
     if (correct && isAnswerCorrect) {
@@ -496,34 +497,6 @@ function StudyPage() {
     return false;
   };
 
-  // Helper function to find a female voice for a given language
-  const findFemaleVoice = (voices: SpeechSynthesisVoice[], langPrefix: string, strict: boolean = false): SpeechSynthesisVoice | null => {
-    // First, try to find a female voice with the language, prioritizing local voices
-    let femaleVoice = voices.find(voice => 
-      voice.lang.startsWith(langPrefix) && 
-      voice.localService && 
-      isFemaleVoice(voice)
-    ) || voices.find(voice => 
-      voice.lang.startsWith(langPrefix) && 
-      isFemaleVoice(voice)
-    );
-    
-    // If strict mode, don't fall back to other languages
-    if (strict) {
-      return femaleVoice || null;
-    }
-    
-    // If no female voice found in the language, try to find any female voice
-    // (better than using a male voice) - but only for non-strict mode
-    if (!femaleVoice) {
-      femaleVoice = voices.find(voice => 
-        voice.localService && isFemaleVoice(voice)
-      ) || voices.find(voice => isFemaleVoice(voice));
-    }
-    
-    return femaleVoice || null;
-  };
-
   const playAudio = () => {
     // Stop any currently playing speech
     speechSynthesis.cancel();
@@ -543,27 +516,66 @@ function StudyPage() {
     
     // Play audio based on mode
     if (mode === 'quiz') {
-      // In quiz mode, play the Spanish word (the question)
+      // In quiz mode, play the Polish word (the question) - but we want Spanish pronunciation
+      // Actually, we should play the Spanish word so they can hear it
       const utterance = new SpeechSynthesisUtterance(currentWord.spanish);
       utterance.lang = 'es-ES';
       
-      // Try to find a female Spanish voice, prioritizing local voices
-      let spanishVoice = findFemaleVoice(voices, 'es');
+      // Use the same robust Spanish voice selection as flashcard mode
+      const spanishVoices = voices.filter(voice => {
+        const lang = voice.lang.toLowerCase();
+        const name = voice.name.toLowerCase();
+        // Must be Spanish language code
+        return (lang.startsWith('es') || lang.includes('es-')) && 
+               !lang.startsWith('en') && 
+               !name.includes('english') &&
+               !name.includes('en-');
+      });
       
-      // Fallback to any Spanish voice if no female voice found
-      if (!spanishVoice) {
-        spanishVoice = voices.find(voice => 
-          voice.lang.startsWith('es') && voice.localService
-        ) || voices.find(voice => voice.lang.startsWith('es')) || null;
+      if (spanishVoices.length === 0) {
+        console.warn('No Spanish voices available. Available voices:', voices.map(v => `${v.name} (${v.lang})`));
+        utterance.lang = 'es-ES';
+        utterance.rate = 0.95;
+        utterance.pitch = 1.0;
+        utterance.volume = 1.0;
+        speechSynthesis.speak(utterance);
+        return;
+      }
+      
+      // Find female Spanish voices - try multiple strategies
+      let femaleSpanishVoices = spanishVoices.filter(voice => isFemaleVoice(voice));
+      
+      // If no female voices found by name, try to find voices that might be female
+      if (femaleSpanishVoices.length === 0) {
+        const nonMaleVoices = spanishVoices.filter(voice => {
+          const nameLower = voice.name.toLowerCase();
+          const maleIndicators = ['male', 'hombre', 'masculino'];
+          return !maleIndicators.some(indicator => nameLower.includes(indicator));
+        });
+        
+        if (nonMaleVoices.length > 0 && nonMaleVoices.length < spanishVoices.length) {
+          femaleSpanishVoices = nonMaleVoices;
+        }
+      }
+      
+      let spanishVoice: SpeechSynthesisVoice | null = null;
+      
+      if (femaleSpanishVoices.length > 0) {
+        spanishVoice = femaleSpanishVoices.find(voice => 
+          voice.localService && isFemaleVoice(voice)
+        ) || femaleSpanishVoices.find(voice => voice.localService) || femaleSpanishVoices[0];
+      } else {
+        spanishVoice = spanishVoices.find(voice => voice.localService) || spanishVoices[0];
       }
       
       if (spanishVoice) {
         utterance.voice = spanishVoice;
+        utterance.lang = spanishVoice.lang;
       }
       
-      utterance.rate = 1.0; // Normal speed for clarity
-      utterance.pitch = 1.1; // Slightly higher pitch for clearer sound
-      utterance.volume = 1.0; // Maximum volume
+      utterance.rate = 0.95;
+      utterance.pitch = 1.0;
+      utterance.volume = 1.0;
       speechSynthesis.speak(utterance);
     } else {
       // In flashcard mode, play the Spanish word
@@ -895,8 +907,8 @@ function StudyPage() {
           </button>
 
           <div className="text-center mb-6">
-            <div className="text-4xl font-bold mb-2">{currentWord.spanish}</div>
-            <div className="text-gray-500">Jak to powiesz po polsku?</div>
+            <div className="text-4xl font-bold mb-2">{currentWord.polish}</div>
+            <div className="text-gray-500">Jak to powiedzieć po hiszpańsku?</div>
           </div>
 
           {!showResult ? (
@@ -916,7 +928,7 @@ function StudyPage() {
                     handleSubmitAnswer();
                   }
                 }}
-                placeholder="Wpisz polskie słowo..."
+                placeholder="Wpisz hiszpańskie słowo..."
                 className={`input mb-4 transition-all duration-300 ${
                   isAnswerCorrect === true 
                     ? 'border-green-500 bg-green-50 ring-2 ring-green-300' 
@@ -961,7 +973,7 @@ function StudyPage() {
                   </div>
                   {!isCorrect && (
                     <div className="text-gray-700">
-                      Poprawna odpowiedź to: <strong>{currentWord.polish}</strong>
+                      Poprawna odpowiedź to: <strong>{currentWord.spanish}</strong>
                     </div>
                   )}
                 </div>
