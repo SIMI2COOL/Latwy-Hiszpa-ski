@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useEffect, useState, useRef } from 'react';
+import { useNavigate, useBlocker } from 'react-router-dom';
 import { getUserSettings, updateSettings, db, logoutUser } from '@/utils/database';
 import type { UserSettings } from '@/types';
 import { useUser } from '@/contexts/UserContext';
@@ -21,6 +21,7 @@ function SettingsPage() {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [notificationPermission, setNotificationPermission] = useState<'granted' | 'denied' | 'default'>('default');
   const [reminderTime, setReminderTime] = useState<{ hour: number; minute: number } | null>(null);
+  const originalNameRef = useRef<string>(''); // Store original name to restore if needed
 
   useEffect(() => {
     async function loadSettings() {
@@ -40,6 +41,39 @@ function SettingsPage() {
     }
     loadSettings();
   }, []);
+
+  // Store original name when component mounts or user changes
+  useEffect(() => {
+    if (user) {
+      originalNameRef.current = user.name;
+    }
+  }, [user?.id]); // Only update when user ID changes, not on every name change
+
+  // Block navigation if name is invalid
+  const isNameInvalid = user ? user.name.trim().length < 2 : false;
+  const blocker = useBlocker(
+    ({ currentLocation, nextLocation }) =>
+      isNameInvalid && currentLocation.pathname !== nextLocation.pathname
+  );
+
+  // Handle blocked navigation
+  useEffect(() => {
+    if (blocker.state === 'blocked') {
+      const confirmed = window.confirm(
+        'Imię musi mieć co najmniej 2 znaki. Czy chcesz przywrócić poprzednie imię i kontynuować?'
+      );
+      
+      if (confirmed) {
+        // Restore original name
+        if (user && originalNameRef.current) {
+          setUser({ ...user, name: originalNameRef.current });
+        }
+        blocker.proceed();
+      } else {
+        blocker.reset();
+      }
+    }
+  }, [blocker, user, setUser]);
 
   const handleToggle = (key: keyof UserSettings) => {
     if (!settings) return;
