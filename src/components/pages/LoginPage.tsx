@@ -2,8 +2,9 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { registerUser, loginUser, createUser } from '@/utils/database';
 import { useUser } from '@/contexts/UserContext';
-import { BookOpen, Mail, Lock, User as UserIcon, Eye, EyeOff } from 'lucide-react';
+import { Mail, Lock, User as UserIcon, Eye, EyeOff } from 'lucide-react';
 import { isValidEmail, isPasswordStrong } from '@/utils/auth';
+import { Logo } from '@/components/common/Logo';
 
 function LoginPage() {
   const [mode, setMode] = useState<'login' | 'register' | 'quick'>('login');
@@ -130,7 +131,7 @@ function LoginPage() {
         <div className="card p-8 shadow-xl">
           <div className="text-center mb-8">
             <div className="flex justify-center mb-4">
-              <BookOpen className="w-16 h-16" style={{ color: '#0074bd' }} />
+              <Logo size={64} />
             </div>
             <h1 className="text-3xl font-bold mb-2" style={{ color: '#c7102e' }}>
               Łatwy Hiszpański
