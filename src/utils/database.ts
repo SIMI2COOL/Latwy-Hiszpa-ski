@@ -216,6 +216,44 @@ export class SpanishAppDatabase extends Dexie {
       console.log('Database upgraded to version 10 - adding arte, emociones, directions, maps, and other new themes');
       // The seed functions will add new themes and vocabulary
     });
+
+    // Version 11: Change reference category to informacion and fix post-office display
+    this.version(11).stores({
+      vocabulary: 'id, polish, spanish, category, subcategory, difficulty, [category+subcategory]',
+      categories: 'id, titlePolish, titleSpanish',
+      subcategories: 'id, categoryId, titlePolish, titleSpanish',
+      users: 'id, name, email, createdAt',
+      userProgress: 'userId, level, totalPoints',
+      studySessions: 'id, categoryId, startedAt, completedAt',
+      flashcardStates: 'wordId, nextReview, interval',
+      settings: '++id',
+    }).upgrade(async (trans) => {
+      console.log('Database upgraded to version 11 - migrating reference to informacion');
+      
+      // Migrate all vocabulary from 'reference' to 'informacion'
+      const referenceWords = await trans.table('vocabulary').where('category').equals('reference').toArray();
+      for (const word of referenceWords) {
+        await trans.table('vocabulary').update(word.id, { category: 'informacion' });
+      }
+      console.log(`Migrated ${referenceWords.length} words from 'reference' to 'informacion'`);
+      
+      // Migrate category
+      const referenceCategory = await trans.table('categories').get('reference');
+      if (referenceCategory) {
+        await trans.table('categories').delete('reference');
+        await trans.table('categories').add({
+          id: 'informacion',
+          titlePolish: 'INFORMACJA',
+          titleSpanish: 'INFORMACIÓN',
+          description: 'Tiempo, números, colores, frases, direcciones, mapas',
+          icon: '📋',
+          color: '#64748B',
+          subcategories: [],
+          totalWords: referenceCategory.totalWords || 0,
+        });
+        console.log('Migrated reference category to informacion');
+      }
+    });
   }
 }
 
@@ -399,10 +437,10 @@ async function seedInitialData() {
       totalWords: 0,
     },
     {
-      id: 'reference',
+      id: 'informacion',
       titlePolish: 'INFORMACJA',
       titleSpanish: 'INFORMACIÓN',
-      description: 'Tiempo, números, colores, frases',
+      description: 'Tiempo, números, colores, frases, direcciones, mapas',
       icon: '📋',
       color: '#64748B',
       subcategories: [],

@@ -61,65 +61,66 @@ export const servicesVocabulary: VocabularyWord[] = [
   { id: 'hotel_012', polish: 'mini bar', spanish: 'minibar', category: 'services', subcategory: 'hotel', difficulty: 'intermediate' },
   { id: 'hotel_013', polish: 'śniadanie', spanish: 'desayuno', category: 'services', subcategory: 'hotel', difficulty: 'beginner' },
   { id: 'hotel_014', polish: 'parking', spanish: 'aparcamiento', category: 'services', subcategory: 'hotel', difficulty: 'beginner' },
+
+  // CORREO - Additional words
+  { id: 'post_014', polish: 'listonosz', spanish: 'cartero', category: 'services', subcategory: 'post-office', difficulty: 'intermediate' },
+  { id: 'post_015', polish: 'dostawa', spanish: 'entrega', category: 'services', subcategory: 'post-office', difficulty: 'intermediate' },
+  { id: 'post_016', polish: 'odbior', spanish: 'recogida', category: 'services', subcategory: 'post-office', difficulty: 'intermediate' },
+  { id: 'post_017', polish: 'przesyłka ekspresowa', spanish: 'correo urgente', category: 'services', subcategory: 'post-office', difficulty: 'advanced' },
+  { id: 'post_018', polish: 'paczka pocztowa', spanish: 'paquete postal', category: 'services', subcategory: 'post-office', difficulty: 'intermediate' },
+
+  // Additional services
+  { id: 'services_001', polish: 'serwis', spanish: 'servicio', category: 'services', subcategory: 'general', difficulty: 'beginner' },
+  { id: 'services_002', polish: 'klient', spanish: 'cliente', category: 'services', subcategory: 'general', difficulty: 'beginner' },
+  { id: 'services_003', polish: 'obsługa', spanish: 'atención', category: 'services', subcategory: 'general', difficulty: 'intermediate' },
+  { id: 'services_004', polish: 'reklamacja', spanish: 'reclamación', category: 'services', subcategory: 'general', difficulty: 'intermediate' },
+  { id: 'services_005', polish: 'gwarancja', spanish: 'garantía', category: 'services', subcategory: 'general', difficulty: 'intermediate' },
+  { id: 'services_006', polish: 'naprawa', spanish: 'reparación', category: 'services', subcategory: 'general', difficulty: 'intermediate' },
+  { id: 'services_007', polish: 'konserwacja', spanish: 'mantenimiento', category: 'services', subcategory: 'general', difficulty: 'intermediate' },
+  { id: 'services_008', polish: 'instalacja', spanish: 'instalación', category: 'services', subcategory: 'general', difficulty: 'intermediate' },
+  { id: 'services_009', polish: 'faktura', spanish: 'factura', category: 'services', subcategory: 'general', difficulty: 'intermediate' },
+  { id: 'services_010', polish: 'rachunek', spanish: 'cuenta', category: 'services', subcategory: 'general', difficulty: 'beginner' },
 ];
 
 export async function seedServicesVocabulary() {
   const { db } = await import('@/utils/database');
-  
+
   try {
-    // Get existing services vocabulary IDs
-    const existingServices = await db.vocabulary.where('category').equals('services').toArray();
-    const existingIds = new Set(existingServices.map(w => w.id));
-    
-    // Update existing words with correct Spanish translations
-    const wordsToUpdate = servicesVocabulary.filter(word => existingIds.has(word.id));
-    for (const word of wordsToUpdate) {
-      await db.vocabulary.update(word.id, { spanish: word.spanish });
+    // Fetch all existing words for this category
+    const existingWordsInDb = await db.vocabulary.where('category').equals('services').toArray();
+    const existingWordMap = new Map(existingWordsInDb.map(word => [word.id, word]));
+
+    const wordsToAdd: typeof servicesVocabulary = [];
+    const wordsToUpdate: typeof servicesVocabulary = [];
+
+    for (const word of servicesVocabulary) {
+      const existing = existingWordMap.get(word.id);
+      if (existing) {
+        // Check if the Spanish translation needs updating
+        if (existing.spanish !== word.spanish || existing.polish !== word.polish || existing.subcategory !== word.subcategory) {
+          wordsToUpdate.push(word);
+        }
+      } else {
+        wordsToAdd.push(word);
+      }
     }
-    
-    // Filter out words that already exist
-    const newWords = servicesVocabulary.filter(word => !existingIds.has(word.id));
-    
-    if (newWords.length > 0) {
-      await db.vocabulary.bulkAdd(newWords);
-      console.log(`✅ Added ${newWords.length} new services words`);
+
+    if (wordsToAdd.length > 0) {
+      await db.vocabulary.bulkAdd(wordsToAdd);
+      console.log(`✅ Added ${wordsToAdd.length} new services words`);
     }
-    
-    // Always update total word count - use the actual array length, not database count
-    // This ensures consistency across devices
-    await db.categories.update('services', { totalWords: servicesVocabulary.length });
-    const dbCount = await db.vocabulary.where('category').equals('services').count();
-    console.log(`✅ Services vocabulary: ${servicesVocabulary.length} words (${dbCount} in database)`);
+
+    if (wordsToUpdate.length > 0) {
+      await db.vocabulary.bulkPut(wordsToUpdate);
+      console.log(`🔄 Updated ${wordsToUpdate.length} existing services words`);
+    }
+
+    // Always update total word count
+    const totalCount = await db.vocabulary.where('category').equals('services').count();
+    await db.categories.update('services', { totalWords: totalCount });
+    console.log(`✅ Services vocabulary: ${totalCount} total words (${servicesVocabulary.length} in file)`);
     return true;
   } catch (error) {
-    if (error instanceof Error && error.name === 'ConstraintError') {
-      // Some words might already exist, try to add the rest
-      const existingServices = await db.vocabulary.where('category').equals('services').toArray();
-      const existingIds = new Set(existingServices.map(w => w.id));
-      
-      // Update existing words
-      const wordsToUpdate = servicesVocabulary.filter(word => existingIds.has(word.id));
-      for (const word of wordsToUpdate) {
-        await db.vocabulary.update(word.id, { spanish: word.spanish });
-      }
-      
-      const newWords = servicesVocabulary.filter(word => !existingIds.has(word.id));
-      
-      if (newWords.length > 0) {
-        try {
-          await db.vocabulary.bulkAdd(newWords);
-        } catch (e) {
-          console.error('Error adding remaining services words:', e);
-        }
-      }
-      
-      // Always update total word count - use the actual array length, not database count
-      // This ensures consistency across devices
-      await db.categories.update('services', { totalWords: servicesVocabulary.length });
-      const dbCount = await db.vocabulary.where('category').equals('services').count();
-      console.log(`✅ Services vocabulary: ${servicesVocabulary.length} words (${dbCount} in database)`);
-      return true;
-    }
     console.error('Error seeding services vocabulary:', error);
     return false;
   }

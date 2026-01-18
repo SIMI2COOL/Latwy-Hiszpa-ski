@@ -2,7 +2,7 @@ import { VocabularyWord } from '@/types';
 
 export const referenceVocabulary: VocabularyWord[] = [
   // CZAS (Time)
-  { id: 'time_001', polish: 'sekunda', spanish: 'segundo', category: 'reference', subcategory: 'time', difficulty: 'beginner' },
+  { id: 'time_001', polish: 'sekunda', spanish: 'segundo', category: 'informacion', subcategory: 'time', difficulty: 'beginner' },
   { id: 'time_002', polish: 'minuta', spanish: 'minuto', category: 'reference', subcategory: 'time', difficulty: 'beginner' },
   { id: 'time_003', polish: 'godzina', spanish: 'hora', category: 'reference', subcategory: 'time', difficulty: 'beginner' },
   { id: 'time_004', polish: 'dzień', spanish: 'día', category: 'reference', subcategory: 'time', difficulty: 'beginner' },
@@ -135,8 +135,17 @@ export async function seedReferenceVocabulary() {
   const { db } = await import('@/utils/database');
 
   try {
+    // Migrate old 'reference' category words to 'informacion'
+    const oldReferenceWords = await db.vocabulary.where('category').equals('reference').toArray();
+    if (oldReferenceWords.length > 0) {
+      for (const word of oldReferenceWords) {
+        await db.vocabulary.update(word.id, { category: 'informacion' });
+      }
+      console.log(`🔄 Migrated ${oldReferenceWords.length} words from 'reference' to 'informacion'`);
+    }
+
     // Fetch all existing words for this category
-    const existingWordsInDb = await db.vocabulary.where('category').equals('reference').toArray();
+    const existingWordsInDb = await db.vocabulary.where('category').equals('informacion').toArray();
     const existingWordMap = new Map(existingWordsInDb.map(word => [word.id, word]));
 
     const wordsToAdd: typeof referenceVocabulary = [];
@@ -165,8 +174,16 @@ export async function seedReferenceVocabulary() {
     }
 
     // Always update total word count
-    const totalCount = await db.vocabulary.where('category').equals('reference').count();
-    await db.categories.update('reference', { totalWords: totalCount });
+    const totalCount = await db.vocabulary.where('category').equals('informacion').count();
+    await db.categories.update('informacion', { totalWords: totalCount });
+    
+    // Delete old 'reference' category if it exists
+    try {
+      await db.categories.delete('reference');
+      console.log('🗑️ Deleted old reference category');
+    } catch (e) {
+      // Category might not exist, that's fine
+    }
     console.log(`✅ Reference vocabulary: ${totalCount} total words (${referenceVocabulary.length} in file)`);
     return true;
   } catch (error) {
