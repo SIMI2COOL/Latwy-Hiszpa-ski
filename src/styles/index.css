@@ -18,10 +18,10 @@
     background-color: #0074bd;
     color: #ffffff;
   }
-  .btn-primary:hover {
+  .btn-primary:hover:not(:disabled) {
     background-color: #005c96;
   }
-  .btn-primary:active {
+  .btn-primary:active:not(:disabled) {
     background-color: #004470;
   }
 

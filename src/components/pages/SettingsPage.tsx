@@ -577,10 +577,16 @@ function SettingsPage() {
               <button
                 onClick={handleSaveProfile}
                 className="btn-primary"
+                disabled={!user || user.name.trim().length < 2}
               >
                 <Save className="w-4 h-4 inline mr-2" />
                 Zapisz profil
               </button>
+              {user && user.name.trim().length < 2 && (
+                <p className="mt-2 text-sm text-red-600">
+                  Imię musi mieć co najmniej 2 znaki
+                </p>
+              )}
             </div>
           </div>
         </div>
@@ -757,6 +763,7 @@ function SettingsPage() {
         <button
           onClick={handleSaveSettings}
           className="w-full btn-primary flex items-center justify-center"
+          disabled={!user || user.name.trim().length < 2}
         >
           <Save className="w-5 h-5 mr-2" />
           Zapisz wszystkie ustawienia
@@ -764,6 +771,11 @@ function SettingsPage() {
         <p className="text-sm text-gray-600 text-center mt-2">
           Zapisz wszystkie zmiany, w tym dzienny cel i aktualizacje profilu
         </p>
+        {user && user.name.trim().length < 2 && (
+          <p className="text-sm text-red-600 text-center mt-2">
+            Imię musi mieć co najmniej 2 znaki, aby zapisać ustawienia
+          </p>
+        )}
       </div>
 
       {/* About */}
